@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# usage: ping host:port user:pwd
+
+curl -w "%{http_code}\n" -isf -o /dev/null -k -u $2 http://$1/system/console/config.json

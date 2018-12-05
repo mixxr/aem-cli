@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# usage: info.sh host:port user:pwd
+curl -i -k -u $2 http://$1/system/console/status-productinfo.json 2>/dev/null | grep Manager

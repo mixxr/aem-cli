@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# AEM Purge Maintenance
+# usage: purge host:port user:pwd [audit|version|workflow|revision|gc|lucene] 
+if [[ -z "$3" ]]; then
+    cmds/errors/generic
+    exit $?
+fi
+if [ $3 == "version" ]; then
+    # check if daily or weekly exists
+    var=$(curl -w "%{http_code}" -o /dev/null -is -k -u $2 http://$1/conf/global/settings/granite/operations/maintenance/granite_weekly/_libs_granite_operat)
+    if [[ $var -lt 400 ]]; then 
+        curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/conf/global/settings/granite/operations/maintenance/granite_weekly/_libs_granite_operat -X POST -F action=start 
+    else
+        var=$(curl -w "%{http_code}" -o /dev/null -is -k -u $2 http://$1/conf/global/settings/granite/operations/maintenance/granite_daily/_libs_granite_operat)
+        if [[ $var -lt 400 ]]; then 
+            curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/conf/global/settings/granite/operations/maintenance/granite_daily/_libs_granite_operat -X POST -F action=start 
+        else
+            echo "000"
+        fi
+    fi
+    
+fi
+if [ $3 == "audit" ]; then
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_weekly/granite_AuditLogMaintenanceTask  -X POST -F action=start
+fi
+if [ $3 == "workflow" ]; then                                                    
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_weekly/granite_WorkflowPurgeTask  -X POST -F action=start
+fi
+if [ $3 == "gc" ]; then
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_weekly/granite_MongoDataStoreGarbageCollectionTask  -X POST -F action=start
+fi
+if [ $3 == "revision" ]; then
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_daily/granite_RevisionGC  -X POST -F action=start
+fi
+if [ $3 == "lucene" ]; then
+    var=$(curl -w "%{http_code}" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_daily/granite_LuceneBinariesCleanup)
+    if [[ $var -lt 400 ]]; then 
+        curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/libs/settings/granite/operations/maintenance/granite_daily/granite_LuceneBinariesCleanup  -X POST -F action=start
+    else
+        echo "000"
+    fi
+fi
+
+
+
+
+
+
+ 
