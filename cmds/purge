@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # AEM Purge Maintenance
-# usage: purge host:port user:pwd [audit|version|workflow|revision|gc|lucene] 
+
+usage () {
+    cat <<HELP_USAGE
+    purge host:port user:pwd [audit|version|workflow|revision|gc|lucene] 
+HELP_USAGE
+}
+
 if [[ -z "$3" ]]; then
-    cmds/errors/generic
+    sh cmds/errors/generic $(usage)
     exit $?
 fi
 if [ $3 == "version" ]; then
