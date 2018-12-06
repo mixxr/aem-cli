@@ -37,6 +37,18 @@ The CLI executes only the lines between the `-- START` and `-- END`. During a co
 
 ## Report
 The farm-exec executes and writes the output line by line as defined in the farm configuration file.
+```
+=======
+AEM CLI
+=======
+reading farm configuration from file.txt
+-->
+server1:4502 admin:admin 200
+server2:4522 admin:admin 200
+server3:4512 admin:pwd 401
+<--
+```
+
 
 ## How To Contribute
 You can add scripts in the cmds folder by using your own scripting language (bash, ruby, ...)
@@ -44,5 +56,24 @@ You can add scripts in the cmds folder by using your own scripting language (bas
 - write your own script 
   - has to accept at least 2 parameters, that is the host:port and usrid:pwd at least
   - can accept more parameters to use in the script
-  - at the end of the execution, if you want to have a sort of report like (Report)
+  - finally, print a string to be used as Report
 - save your script in the folder cmds
+
+### Example
+```
+#!/usr/bin/env bash
+# usage: info.sh host:port user:pwd
+curl -i -k -u $2 http://$1/system/console/status-productinfo.json 2>/dev/null | grep Manager
+```
+
+produces an output like the following:
+```
+=======
+AEM CLI
+=======
+reading farm configuration from file.txt
+-->
+localhost:4502 admin:admin " Adobe Experience Manager (6.4.0)",
+localhost:4522 admin:admin " Product : Adobe Experience Manager (6.0.0.SNAPSHOT)", " Adobe Experience Manager (6.2.0)",
+<--
+```
