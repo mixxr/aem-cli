@@ -72,8 +72,9 @@ You can add scripts in the cmds folder by using your own scripting language (bas
   - can accept more parameters to use in the script
   - finally, print a string to be used as Report
 - save your script in the folder cmds
+- add a usage example in the Examples section
 
-### Example
+### Command Example
 ```
 #!/usr/bin/env bash
 # usage: info.sh host:port user:pwd
@@ -92,7 +93,7 @@ localhost:4522 admin:admin " Product : Adobe Experience Manager (6.0.0.SNAPSHOT)
 <--
 ```
 
-### A Bit More Complex Example
+### A Bit More Complex Command Example
 ```
 #!/usr/bin/env bash
 usage () {
