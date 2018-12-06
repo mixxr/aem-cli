@@ -23,6 +23,20 @@ executes the maintenance audit task.
 ```
 changes the replication-receiver's password = my-new-secret.
 
+```bash
+./farm-exec.sh file.txt backup /backups/last 20
+```
+executes an on-line backup with target=/backups/last and delay=20.
+
+```bash
+./farm-exec.sh file.txt users 
+```
+it will generate an error like the following:
+```
+users exits with error: MISSING ARGUMENTS.
+Usage: users host:port user:pwd [enable|changepwd] userid [password_to_change]
+```
+
 ## Farm Configuration File
 ```
 NOTGOOD LINE 222
@@ -81,10 +95,6 @@ localhost:4522 admin:admin " Product : Adobe Experience Manager (6.0.0.SNAPSHOT)
 ### A Bit More Complex Example
 ```
 #!/usr/bin/env bash
-# usage: info.sh host:port user:pwd
-curl -i -k -u $2 http://$1/system/console/status-productinfo.json 2>/dev/null | grep Manager
-```
-#!/usr/bin/env bash
 usage () {
     cat <<HELP_USAGE
     backup host:port user:pwd target delay
@@ -97,3 +107,6 @@ if [[ (-z "$3") || (-z "$4") ]]; then
 fi
 curl -w "%{http_code}\n"  -o /dev/null -isf -k -u $2 http://$1/libs/granite/backup/content/createBackup/content/items/backupform.html -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'force=true&target='$3'&delay='$4 
 ```
+It uses the generic error script that just prints a message and exit with 1.
+Here the usage() function is an heredoc in place of echo/printf, this will help the reader looking the code.
+
