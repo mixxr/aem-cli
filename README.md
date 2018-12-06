@@ -5,10 +5,10 @@ Adobe Experience Manager Administration CLI
 - AEM 6.4
 
 ## Usage
-- populate the farm configuration file (e.g. file.txt) with your farm addresses and identifications
-- execute the farm-exec shaell script
+- populate the farm configuration file (it is a simple text file, see Farm Configuration File) with your farm addresses and credentials
+- execute the farm-exec shell script
 ```bash
-./farm-exec.sh file.txt <command> [<parameters>]
+./farm-exec.sh <farm-config-file> <command> [<parameters>]
 ```
 - read the output
 
