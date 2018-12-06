@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+usage () {
+    cat <<HELP_USAGE
+    backup host:port user:pwd target delay
+HELP_USAGE
+}
+
+if [[ (-z "$3") || (-z "$4") ]]; then
+    sh cmds/errors/generic $(usage)
+    exit $?
+fi
+curl -w "%{http_code}\n"  -o /dev/null -isf -k -u $2 http://$1/libs/granite/backup/content/createBackup/content/items/backupform.html -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'force=true&target='$3'&delay='$4 

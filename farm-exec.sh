@@ -22,7 +22,7 @@ do
     fi
 
     if [[ $START == 1 && ! -z "$host" && ! -z "$user" ]]; then
-        var=$($CMD $host $user ${@:3})
+        var=$(sh $CMD $host $user ${@:3})
         RC=$?
         if [ $RC -ne 0 ]; then
             printf "<--\n$2 exits with error: $var\n"

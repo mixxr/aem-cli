@@ -77,3 +77,23 @@ localhost:4502 admin:admin " Adobe Experience Manager (6.4.0)",
 localhost:4522 admin:admin " Product : Adobe Experience Manager (6.0.0.SNAPSHOT)", " Adobe Experience Manager (6.2.0)",
 <--
 ```
+
+### A Bit More Complex Example
+```
+#!/usr/bin/env bash
+# usage: info.sh host:port user:pwd
+curl -i -k -u $2 http://$1/system/console/status-productinfo.json 2>/dev/null | grep Manager
+```
+#!/usr/bin/env bash
+usage () {
+    cat <<HELP_USAGE
+    backup host:port user:pwd target delay
+HELP_USAGE
+}
+
+if [[ (-z "$3") || (-z "$4") ]]; then
+    sh cmds/errors/generic $(usage)
+    exit $?
+fi
+curl -w "%{http_code}\n"  -o /dev/null -isf -k -u $2 http://$1/libs/granite/backup/content/createBackup/content/items/backupform.html -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'force=true&target='$3'&delay='$4 
+```
