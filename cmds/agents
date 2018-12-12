@@ -1,0 +1,24 @@
+
+usage () {
+    cat <<HELP_USAGE
+    agents host:port user:pwd create <name> <protocol> <host> <port> <transportUser> <transportPwd>
+    agents host:port user:pwd enable <name> [true|false]
+HELP_USAGE
+}
+
+if [[ (-z "$3")  || ($3 -ne "enable" && $3 -ne "create") || (-z "$4") ]]; then
+    sh cmds/errors/generic $(usage)
+    exit $?
+fi
+NAME=$4
+if [ $3 == "enable" ]; then
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.author/$NAME -X POST -F "jcr:content/enabled="$5
+fi
+if [ $3 == "create" ]; then
+    HTTP=$5
+    HOST=$6
+    PORT=$7
+    USER=$8
+    PWD=$9
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.author/$NAME -X POST -F "jcr:content/jcr:title="$NAME  -F "jcr:content/transportUri=$HTTP://$HOST:$PORT/bin/receive?sling:authRequestLogin=1" -F "jcr:content/transportUser="$USER -F "jcr:content/transportPassword="$PWD -F "jcr:content/jcr:description=$HOST Replication" -F "jcr:content/enabled=true" -F "jcr:primaryType=cq:Page" -F "jcr:content/logLevel=error" -F "jcr:content/ssl=relaxed" -F "jcr:content/sling:resourceType=/libs/cq/replication/components/agent"  -F "jcr:content/template=/libs/cq/replication/templates/agent" 
+fi

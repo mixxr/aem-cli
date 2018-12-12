@@ -2,8 +2,14 @@
 printf "=======\nAEM CLI\n=======\nreading farm configuration from $1\n"
 CMD=cmds/"$2"
 
+# if farm file does not exist
+if [ ! -e "$1" ]; then
+    echo $1" file not found!"
+    exit 1
+fi
+
 # if CMD does not exists
-if [ ! -e "$CMD" ]; then
+if [[ ! -e "$CMD" || (-z "$2") ]]; then
     echo $2" command not found!"
     exit 1
 fi

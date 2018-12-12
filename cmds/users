@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 usage () {
     cat <<HELP_USAGE
-    users host:port user:pwd [enable|changepwd] userid [password_to_change]
+    users host:port user:pwd [enable|changepwd] <userid> [password_to_change]
 HELP_USAGE
 }
 
