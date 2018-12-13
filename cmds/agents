@@ -1,9 +1,10 @@
 
 usage () {
     cat <<HELP_USAGE
-    agents host:port user:pwd create <name> <protocol> <host> <port> <transportUser> <transportPwd>
-    agents host:port user:pwd enable <name> [true|false]
-    agents host:port user:pwd delete <name>
+    agents host:port user:pwd create-replicate <[author|publish]> <name> <protocol> <host> <port> <transportUser> <transportPwd>
+    agents host:port user:pwd create-flush <[author|publish]> <name> <protocol> <host> <port>
+    agents host:port user:pwd enable <[author|publish]> <name> <[true|false]>
+    agents host:port user:pwd delete <[author|publish]> <name>
 HELP_USAGE
 }
 
@@ -11,23 +12,30 @@ if [[ ($3) && $3 == "usage" ]]; then
     usage
     exit 255
 fi
-if [[ (-z "$4") ]]; then
+if [[ (-z "$5") ]]; then
     sh cmds/errors/generic
     exit $?
 fi
 
-NAME=$4
+RUNMODE=$4
+NAME=$5
 if [ $3 == "enable" ]; then
-    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.author/$NAME -X POST -F "jcr:content/enabled="$5
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.$RUNMODE/$NAME -X POST -F "jcr:content/enabled="$5
 fi
-if [ $3 == "create" ]; then
-    HTTP=$5
-    HOST=$6
-    PORT=$7
-    USER=$8
-    PWD=$9
-    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.author/$NAME -X POST -F "jcr:content/jcr:title="$NAME  -F "jcr:content/transportUri=$HTTP://$HOST:$PORT/bin/receive?sling:authRequestLogin=1" -F "jcr:content/transportUser="$USER -F "jcr:content/transportPassword="$PWD -F "jcr:content/jcr:description=$HOST Replication" -F "jcr:content/enabled=true" -F "jcr:primaryType=cq:Page" -F "jcr:content/logLevel=error" -F "jcr:content/ssl=relaxed" -F "jcr:content/sling:resourceType=/libs/cq/replication/components/agent"  -F "jcr:content/template=/libs/cq/replication/templates/agent" 
+if [ $3 == "create-replicate" ]; then
+    HTTP=$6
+    HOST=$7
+    PORT=$8
+    USER=$9
+    PWD=${10}
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.$RUNMODE/$NAME -X POST -F "jcr:content/jcr:title="$NAME  -F "jcr:content/transportUri=$HTTP://$HOST:$PORT/bin/receive?sling:authRequestLogin=1" -F "jcr:content/transportUser="$USER -F "jcr:content/transportPassword="$PWD -F "jcr:content/jcr:description=$HOST Replication" -F "jcr:content/enabled=true" -F "jcr:primaryType=cq:Page" -F "jcr:content/logLevel=error" -F "jcr:content/ssl=relaxed" -F "jcr:content/sling:resourceType=/libs/cq/replication/components/agent"  -F "jcr:content/template=/libs/cq/replication/templates/agent" 
+fi
+if [ $3 == "create-flush" ]; then
+    HTTP=$6
+    HOST=$7
+    PORT=$8
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.$RUNMODE/$NAME -X POST -F "jcr:content/jcr:title="$NAME  -F "jcr:content/transportUri=$HTTP://$HOST:$PORT/dispatcher/invalidate.cache" -F "jcr:content/jcr:description=$HOST Flush" -F "jcr:content/triggerReceive=true" -F "jcr:content/triggerSpecific=true" -F "jcr:content/protocolHTTPHeaders=CQ-Action:{action}" -F "jcr:content/protocolHTTPHeaders=CQ-Handle:{path}" -F "jcr:content/protocolHTTPHeaders=CQ-Path: {path}" -F "jcr:content/protocolHTTPMethod=GET" -F "jcr:content/serializationType=flush" -F "jcr:content/retryDelay=15000" -F "jcr:content/enabled=true" -F "jcr:primaryType=cq:Page" -F "jcr:content/logLevel=error" -F "jcr:content/ssl=relaxed" -F "jcr:content/sling:resourceType=/libs/cq/replication/components/agent"  -F "jcr:content/template=/libs/cq/replication/templates/agent" 
 fi
 if [ $3 == "delete" ]; then
-    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.author/$NAME -X DELETE
+    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/etc/replication/agents.$RUNMODE/$NAME -X DELETE
 fi

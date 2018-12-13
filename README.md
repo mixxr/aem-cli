@@ -29,6 +29,16 @@ changes the replication-receiver's password = my-new-secret.
 executes an on-line backup with target=/backups/last and delay=20.
 
 ```bash
+./farm-exec.sh file.txt agents create-replicate author replic-000 http 10.10.1.15 4503 admin adminsecret;
+```
+creates on the author instance a Replication Agent named replic-001 that will replicate the server 10.10.1.15:4503.
+
+```bash
+./farm-exec.sh file.txt agents create-flush publish flush-001 https apache123.local 8080
+```
+creates on the publish instance a Flush Agent named flush-001 that will flush the web server apache123.local:8080 in HTTPS.
+
+```bash
 ./farm-exec.sh file.txt users 
 ```
 it will generate an error like the following:
