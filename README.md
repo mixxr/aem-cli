@@ -111,3 +111,5 @@ curl -w "%{http_code}\n"  -o /dev/null -isf -k -u $2 http://$1/libs/granite/back
 It uses the generic error script that just prints a message and exit with 1.
 Here the usage() function is an heredoc in place of echo/printf, this will help the reader looking the code.
 
+# Limitations and Disclaimer
+THE SOFTWARE IS PROVIDED “AS IS.” YOU BEAR THE RISK OF USING IT. PLEASE USE IT IN NON PRODUCTION ENVIRONMENTS.
