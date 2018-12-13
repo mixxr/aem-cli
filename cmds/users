@@ -5,8 +5,12 @@ usage () {
 HELP_USAGE
 }
 
-if [[ (-z "$3")  || ($3 -ne "enable" && $3 -ne "changepwd") || (-z "$4") ]]; then
-    sh cmds/errors/generic $(usage)
+if [[ ($3) && $3 == "usage" ]]; then
+    usage
+    exit 255
+fi
+if [[ (-z "$4") ]]; then
+    sh cmds/errors/generic
     exit $?
 fi
 if [ $3 == "enable" ]; then

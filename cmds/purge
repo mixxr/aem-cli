@@ -7,10 +7,15 @@ usage () {
 HELP_USAGE
 }
 
-if [[ -z "$3" ]]; then
-    sh cmds/errors/generic $(usage)
+if [[ ($3) && $3 == "usage" ]]; then
+    usage
+    exit 255
+fi
+if [[ (-z "$3") ]]; then
+    sh cmds/errors/generic
     exit $?
 fi
+
 if [ $3 == "version" ]; then
     # check if daily or weekly exists
     var=$(curl -w "%{http_code}" -o /dev/null -is -k -u $2 http://$1/conf/global/settings/granite/operations/maintenance/granite_weekly/_libs_granite_operat)

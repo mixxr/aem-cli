@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-echo "MISSING ARGUMENTS."
-echo "Usage: "$@
+echo "MISSING ARGUMENTS. See command usage. "$@
 exit 1

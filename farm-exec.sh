@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-printf "=======\nAEM CLI\n=======\nreading farm configuration from $1\n"
+printf "=======\nAEM CLI\n=======\nReading farm configuration from $1\n"
 CMD=cmds/"$2"
 
 # if farm file does not exist
@@ -9,9 +9,13 @@ if [ ! -e "$1" ]; then
 fi
 
 # if CMD does not exists
-if [[ ! -e "$CMD" || (-z "$2") ]]; then
+if [[ -z "$2" ]]; then
+    echo "Please insert a command!"
+    exit 2
+fi
+if [ ! -e "$CMD" ]; then
     echo $2" command not found!"
-    exit 1
+    exit 3
 fi
 
 while read -r host user 
@@ -31,7 +35,11 @@ do
         var=$(sh $CMD $host $user ${@:3})
         RC=$?
         if [ $RC -ne 0 ]; then
-            printf "<--\n$2 exits with error: $var\n"
+            if [ $RC -eq 255 ]; then
+                printf "<--\n$2 command usage:\n $var\n"
+            else    
+                printf "<--\n$2 exits with error: $var\n"
+            fi   
             exit $RC
         else
             echo $host $user $var
