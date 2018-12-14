@@ -8,9 +8,30 @@ Adobe Experience Manager Administration CLI
 - populate the farm configuration file (it is a simple text file, see Farm Configuration File) with your farm addresses and credentials
 - execute the farm-exec shell script
 ```bash
-./farm-exec.sh <farm-config-file> <command> [<parameters>]
+./farm-exec.sh farm-config-file command [parameter...]
 ```
 - read the output
+
+Each command has an usage() function that can be invoked as following:
+```bash
+./farm-exec.sh file.txt command usage
+```
+will produce the help:
+```
+=======
+AEM CLI
+=======
+Reading farm configuration from file.txt
+-->
+<--
+users command usage:
+    users host:port user:pwd create userid password
+    users host:port user:pwd delete userid
+    users host:port user:pwd enable userid [true|false]
+    users host:port user:pwd changepwd userid password_to_change
+    users host:port user:pwd [add|rem] userid groupid
+```
+
 
 ## Examples
 ```bash
