@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 usage () {
     cat <<HELP_USAGE
-    users host:port user:pwd [enable|changepwd] <userid> [password_to_change]
+    users host:port user:pwd create userid password
+    users host:port user:pwd delete userid
+    users host:port user:pwd enable userid [true|false]
+    users host:port user:pwd changepwd userid password_to_change
+    users host:port user:pwd [add|rem] userid groupid
 HELP_USAGE
+}
+
+home() {
+    VAR1=$(curl -k -s -u $2 http://$1/crx/de/query.jsp -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data "type=xpath&stmt=/jcr:root/home$4//*[@rep:authorizableId='$3'] order by @jcr:score&showResults=true" | awk -F ':' '{print $3}'| awk -F ',' '{print $1}')
+    echo $VAR1 | tr -d '"'
 }
 
 if [[ ($3) && $3 == "usage" ]]; then
@@ -13,12 +22,35 @@ if [[ (-z "$4") ]]; then
     sh cmds/errors/generic
     exit $?
 fi
+CUID=$4
+if [ $3 == "create" ]; then
+    PWD=$5
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1/libs/granite/security/post/authorizables -F createUser= -F authorizableId=$CUID -F rep:password=$PWD -F profile/familyName=$CUID
+fi
+UHOME=$( home $1 $2 $CUID )
+if [ $3 == "home" ]; then
+    echo $UHOME
+fi
+if [ $3 == "delete" ]; then
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1$UHOME -F deleteAuthorizable=
+fi
 if [ $3 == "enable" ]; then
-    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/home/users/system/$4.rw.html -X POST -F disableUser= 
+    [ "$5" == "false" ] && INACTIVE="inactive" || INACTIVE=""
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1$UHOME.rw.html -X POST -F "disableUser="$INACTIVE
 fi
 if [ $3 == "changepwd" ]; then
     IFS=':' read -r -a PARAMS <<< "$2"
-    curl -w "%{http_code}\n" -o /dev/null -is -k -u $2 http://$1/home/users/system/$4.rw.userprops.html -X POST -F :currentPassword=${PARAMS[1]} -F rep:password=$5
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1$UHOME.rw.userprops.html -X POST -F :currentPassword=${PARAMS[1]} -F rep:password=$5
 fi
-#rc=$?; if [[ $rc != 200 ]]; then exit 1; fi
- 
+if [ $3 == "add" ]; then
+    CGID=$5
+    GHOME=$( home $1 $2 $CGID '/groups')
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1$GHOME -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'memberAction=addMembers&memberEntry='$CUID
+fi
+if [ $3 == "rem" ]; then
+    CGID=$5
+    GHOME=$( home $1 $2 $CGID '/groups')
+    curl -w "%{http_code}\n" -o /dev/null -s -k -u $2 http://$1$GHOME -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'memberAction=removeMembers&memberEntry='$CUID
+fi
+
+# curl -u admin:admin -FdeleteAuthorizable= http://localhost:4502/home/users/t/testuser 
