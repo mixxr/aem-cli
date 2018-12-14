@@ -16,7 +16,7 @@ Each command has an usage() function that can be invoked as following:
 ```bash
 ./farm-exec.sh file.txt command usage
 ```
-will produce the help:
+will produce the help (eg. `users usage`):
 ```
 =======
 AEM CLI
@@ -64,8 +64,7 @@ creates on the publish instance a Flush Agent named flush-001 that will flush th
 ```
 it will generate an error like the following:
 ```
-users exits with error: MISSING ARGUMENTS.
-Usage: users host:port user:pwd [enable|changepwd] userid [password_to_change]
+users exits with error: MISSING ARGUMENTS. See usage.
 ```
 
 ## Farm Configuration File
