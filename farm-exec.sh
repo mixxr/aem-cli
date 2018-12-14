@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+list(){
+
+
+for entry in ./cmds/*
+do
+  echo "$entry" | awk -F '/' '{print $3}'
+done
+
+echo "---- HELP: ----"
+echo "try: $1 $2 command usage"
+
+}
 printf "=======\nAEM CLI\n=======\nReading farm configuration from $1\n"
 CMD=cmds/"$2"
 
@@ -11,6 +23,7 @@ fi
 # if CMD does not exists
 if [[ -z "$2" ]]; then
     echo "Please insert a command!"
+    list $0 $1
     exit 2
 fi
 if [ ! -e "$CMD" ]; then
