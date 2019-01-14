@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+usage () {
+    cat <<HELP_USAGE
+    packages host:port user:pwd build package-group package-name
+    packages host:port user:pwd download package-group package-name
+HELP_USAGE
+}
+if [[ ($3) && $3 == "usage" ]]; then
+    usage
+    exit 255
+fi
+if [[ (-z "$5") ]]; then
+    sh cmds/errors/generic
+    exit $?
+fi
+
+if [ $3 == "build" ]; then
+    curl -w "%{http_code}\n" -X POST -o /dev/null -isf -k -u $2 http://$1/crx/packmgr/service/script.html/etc/packages/$4/$5.zip?cmd=build  
+fi
+if [ $3 == "download" ]; then
+    curl -w "%{http_code}\n" -o $5.zip -isf -k -u $2 http://$1/etc/packages/$4/$5.zip
+fi

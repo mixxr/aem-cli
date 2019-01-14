@@ -4,7 +4,9 @@ list(){
 
 for entry in ./cmds/*
 do
-  echo "$entry" | awk -F '/' '{print $3}'
+    if [[ $entry != "./cmds/errors" ]]; then 
+        echo "$entry" | awk -F '/' '{print $3}'
+    fi
 done
 
 echo "---- HELP: ----"
@@ -22,7 +24,7 @@ fi
 
 # if CMD does not exists
 if [[ -z "$2" ]]; then
-    echo "Please insert a command!"
+    echo "Please insert a command:"
     list $0 $1
     exit 2
 fi
