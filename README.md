@@ -12,12 +12,12 @@ Adobe Experience Manager Administration CLI
 ```
 - read the output
 
-Each command has an usage() function that can be invoked as following:
+To retrieve the list of implemented commands type `./farm-exec.sh file.txt`.
+
+To retrive the specific command usage type `./farm-exec.sh file.txt command usage`, an example in the following:
+
 ```bash
-./farm-exec.sh file.txt command usage
-```
-will produce the help (eg. `users usage`):
-```
+> ./farm-exec.sh file.txt users usage
 =======
 AEM CLI
 =======
@@ -32,6 +32,15 @@ users command usage:
     users host:port user:pwd [add|rem] userid groupid
 ```
 
+## Command List (currently)
+- agents
+- backup
+- info
+- packages
+- ping
+- purge
+- users
+- workflow
 
 ## Examples
 ```bash
